@@ -12,10 +12,10 @@ import 'dart:typed_data';
 
 import 'package:args/args.dart';
 import 'package:jovial_misc/io_utils.dart';
-import 'package:jovial_svg/src/common_noui.dart';
-import 'package:jovial_svg/src/compact_noui.dart';
-import 'package:jovial_svg/src/svg_parser.dart';
-import 'package:jovial_svg/src/avd_parser.dart';
+import 'package:pdf_svg/src/common_noui.dart';
+import 'package:pdf_svg/src/compact_noui.dart';
+import 'package:pdf_svg/src/svg_parser.dart';
+import 'package:pdf_svg/src/avd_parser.dart';
 
 ///
 /// Convert SVG or AVD to SI

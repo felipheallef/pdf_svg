@@ -36,7 +36,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pdf_svg/jovial_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 const _imageBaseURL =

@@ -30,75 +30,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 library;
 
-import 'dart:ui';
-import 'package:jovial_svg/src/svg_graph.dart';
+import 'package:pdf_svg/src/svg_graph.dart';
 
 import 'path_noui.dart';
 import 'common_noui.dart';
-import 'dart:math' show pi;
+import 'render.dart';
 
 ///
-/// Builder of a Flutter UI path.  See [EnhancedPathBuilder] for usage.
+/// Builder of a PDF path.  See [EnhancedPathBuilder] for usage.
 ///
-class UIPathBuilder implements EnhancedPathBuilder {
-  final void Function(UIPathBuilder)? _onEnd;
-
-  UIPathBuilder({this._onEnd});
-
-  ///
-  /// The path that is built, or is being built.
-  ///
-  final path = Path();
-
-  @override
-  void arcToPoint(
-    PointT arcEnd, {
-    required RadiusT radius,
-    required double rotation,
-    required bool largeArc,
-    required bool clockwise,
-  }) => path.arcToPoint(
-    newOffset(arcEnd),
-    radius: newRadius(radius),
-    rotation: rotation * 180 / pi,
-    largeArc: largeArc,
-    clockwise: clockwise,
-  );
-
-  @override
-  void addOval(RectT rect) {
-    path.addOval(Rect.fromLTWH(rect.left, rect.top, rect.width, rect.height));
-  }
-
-  @override
-  void close() => path.close();
-
-  @override
-  void cubicTo(PointT c1, PointT c2, PointT p, bool shorthand) {
-    path.cubicTo(c1.x, c1.y, c2.x, c2.y, p.x, p.y);
-  }
-
-  @override
-  void lineTo(PointT p) => path.lineTo(p.x, p.y);
-
-  @override
-  void moveTo(PointT p) => path.moveTo(p.x, p.y);
-
-  @override
-  void quadraticBezierTo(PointT control, PointT p, bool shorthand) =>
-      path.quadraticBezierTo(control.x, control.y, p.x, p.y);
-
-  @override
-  void end() {
-    final f = _onEnd;
-    if (f != null) {
-      f(this);
-    }
-  }
-
-  Offset newOffset(PointT o) => Offset(o.x, o.y);
-
-  Radius newRadius(RadiusT r) => Radius.elliptical(r.x, r.y);
+class UIPathBuilder extends SIPathBuilder {
+  UIPathBuilder({super.onEnd});
 }
 
 ///
@@ -119,7 +61,7 @@ abstract class SvgCustomPath implements SvgInheritableAttributesNode {
   factory SvgCustomPath(Path path) => SvgCustomPathImpl(path);
 
   ///
-  /// Convenience method to parse a path string, producing a Flutter [Path].
+  /// Convenience method to parse a path string, producing a PDF [Path].
   /// See [PathParser] for details on parsing.
   ///
   static Path parsePath(String source) {

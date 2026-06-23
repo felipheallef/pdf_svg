@@ -44,7 +44,7 @@ POSSIBILITY OF SUCH DAMAGE.
 /// final node = svg.dom.idLookup['foo'] as SvgEllipse;
 /// node.paint.fillColor = Colors.blue;
 /// final ScalableImage si = svg.build();
-///    ... display si, perhaps in a ScalableImageWidget ...
+///    ... paint si into a PDF graphics canvas ...
 /// ```
 ///
 /// A full sample can be found in the GitHub repository in
@@ -54,13 +54,12 @@ POSSIBILITY OF SUCH DAMAGE.
 ///
 library;
 
-import 'dart:ui';
+import 'package:pdf_svg/src/common_noui.dart';
+import 'package:pdf_svg/src/dag.dart';
+import 'package:pdf_svg/src/render.dart';
+import 'package:pdf_svg/src/svg_parser.dart';
 
-import 'package:jovial_svg/src/common_noui.dart';
-import 'package:jovial_svg/src/dag.dart';
-import 'package:jovial_svg/src/svg_parser.dart';
-
-import 'jovial_svg.dart';
+import 'pdf_svg.dart';
 import 'src/svg_graph.dart';
 
 export 'src/svg_graph.dart'

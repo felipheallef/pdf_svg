@@ -3,8 +3,8 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/jovial_svg.dart';
-import 'package:jovial_svg/dom.dart';
+import 'package:pdf_svg/jovial_svg.dart';
+import 'package:pdf_svg/dom.dart';
 
 extension ColorToInt on Color {
   static int _floatToInt8(double x) {

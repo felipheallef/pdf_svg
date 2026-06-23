@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pdf_svg/jovial_svg.dart';
 import 'package:http/http.dart' as http;
 
 ///

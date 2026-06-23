@@ -50,24 +50,8 @@ POSSIBILITY OF SUCH DAMAGE.
 ///  A compact `.si` file can be created with `dart run jovial_svg:svg_to_si`
 ///  or `dart run jovial_svg:avd_to_si` (after  running `dart pub get`).
 ///
-// ignore: comment_references
-///  [ScalableImageWidget] can be used to display a [ScalableImage].
-///  The image can be automatically scaled by the widget, and fit into the
-///  available area with a `BoxFit` and an `Alignment`.
-// ignore: comment_references
-///  [ScalableImageWidget]
-// ignore: comment_references
-///  will, if needed, asynchronously load a [ScalableImage] asset and
-///  prepare any embedded pixel-based images.
-///
 library;
 
-export 'src/exported.dart'
-    show ScalableImage, ExportedID, ImageDisposeBugWorkaround;
-export 'src/widget.dart'
-    show
-        ScalableImageWidget,
-        ScalableImageSource,
-        ScalableImageCache,
-        ScalingTransform,
-        ExportedIDLookup;
+export 'src/exported.dart' show ScalableImage, ExportedID;
+export 'src/render.dart'
+    show PdfCanvas, PdfDocument, PdfGraphics, PdfPageFormat, PdfColor;

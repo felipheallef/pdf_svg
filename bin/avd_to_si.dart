@@ -1,5 +1,5 @@
-import 'package:jovial_svg/src/avd_parser.dart';
-import 'package:jovial_svg/src/common_noui.dart';
+import 'package:pdf_svg/src/avd_parser.dart';
+import 'package:pdf_svg/src/common_noui.dart';
 import 'svg_to_si.dart';
 
 class AvdToSI extends ToSI {

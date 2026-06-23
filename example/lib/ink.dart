@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pdf_svg/jovial_svg.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

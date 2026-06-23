@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pdf_svg/jovial_svg.dart';
 
 void main() async {
   final si = await ScalableImage.fromSvgHttpUrl(

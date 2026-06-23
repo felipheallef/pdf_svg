@@ -32,7 +32,7 @@ import 'dart:typed_data';
 
 import 'package:hive/hive.dart';
 import 'package:jovial_misc/async_fetcher.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pdf_svg/pdf_svg.dart';
 
 ///
 /// A persistent cache of scalable images originally created from SVG files.

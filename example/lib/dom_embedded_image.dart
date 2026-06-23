@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:jovial_svg/dom.dart';
-import 'package:jovial_svg/jovial_svg.dart';
+import 'package:pdf_svg/dom.dart';
+import 'package:pdf_svg/jovial_svg.dart';
 
 ///
 /// Small program to show how to handle embedded images with DOM

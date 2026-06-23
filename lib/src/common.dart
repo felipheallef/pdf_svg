@@ -36,15 +36,14 @@ library;
 
 import 'dart:math';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
 
-import '../jovial_svg.dart';
 import 'affine.dart';
 import 'common_noui.dart';
 import 'exported.dart' show ExportedIDBoundary;
+import 'render.dart';
+import 'render.dart' as ui;
 
 extension ColorToInt on Color {
   static int _floatToInt8(double x) {
@@ -927,7 +926,6 @@ class SIPath extends SIRenderable {
 }
 
 class SIImage extends SIRenderable {
-  late final loader = _ImageLoader(this);
   final SIImageData _data;
 
   SIImage(this._data);
@@ -971,14 +969,16 @@ class SIImage extends SIRenderable {
     }
   }
 
-  Future<void> prepare() => loader.prepare();
-
-  void unprepare() => loader.unprepare();
-
-  bool get isLoaded => loader._decoded != null;
-
   @override
-  void paint(Canvas c, Color currentColor) => loader.paint(c);
+  void paint(Canvas c, Color currentColor) {
+    final image = PdfImage.file(c.document, bytes: encoded);
+    c.drawImageRect(
+      ui.Image(image),
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromLTWH(x, y, width, height),
+      Paint(),
+    );
+  }
 
   @override
   void addChildren(Set<Object> dagger) {}
@@ -1001,141 +1001,6 @@ class SIImage extends SIRenderable {
   @override
   int get hashCode =>
       0xc36c5d4e ^ Object.hash(x, y, width, height, Object.hashAll(encoded));
-}
-
-class _ImageLoader {
-  final SIImage source;
-  int _timesPrepared = 0;
-  ui.Image? _decoded;
-  ui.Codec? _codec;
-  ui.ImmutableBuffer? _buf;
-  ui.ImageDescriptor? _descriptor;
-
-  _ImageLoader(this.source);
-
-  bool get _disposeBuf =>
-      ScalableImage.imageDisposeBugWorkaround ==
-          ImageDisposeBugWorkaround.silentlyIgnoreErrors ||
-      ScalableImage.imageDisposeBugWorkaround ==
-          ImageDisposeBugWorkaround.disposeBoth ||
-      ScalableImage.imageDisposeBugWorkaround ==
-          ImageDisposeBugWorkaround.disposeImmutableBuffer;
-
-  bool get _disposeDescriptor =>
-      ScalableImage.imageDisposeBugWorkaround ==
-          ImageDisposeBugWorkaround.silentlyIgnoreErrors ||
-      ScalableImage.imageDisposeBugWorkaround ==
-          ImageDisposeBugWorkaround.disposeBoth ||
-      ScalableImage.imageDisposeBugWorkaround ==
-          ImageDisposeBugWorkaround.disposeImageDescriptor;
-
-  // https://github.com/zathras/jovial_svg/issues/62
-  static void callDispose(void Function() f) {
-    try {
-      f();
-    } catch (e, st) {
-      if (ScalableImage.imageDisposeBugWorkaround !=
-          ImageDisposeBugWorkaround.silentlyIgnoreErrors) {
-        debugPrint(
-          'WARNING:  Bug detected in Flutter image-related dispose() call.',
-        );
-        debugPrint('    Ignoring $e');
-        debugPrint(
-          '    This warning can be silenced with '
-          'ScalableImage.imageDisposeBugWorkaround.',
-        );
-        debugPrint('    See  https://github.com/zathras/jovial_svg/issues/62');
-        debugPrint('    Stack trace: $st');
-      }
-    }
-  }
-
-  Future<void> prepare() async {
-    _timesPrepared++;
-    if (_timesPrepared > 1) {
-      return;
-    }
-    assert(_decoded == null);
-    final buf = await ui.ImmutableBuffer.fromUint8List(source.encoded);
-    ui.ImageDescriptor? des;
-    ui.Codec? codec;
-    ui.Image? decoded;
-    try {
-      des = await ui.ImageDescriptor.encoded(buf);
-      codec = _codec = await des.instantiateCodec();
-      decoded = (await codec.getNextFrame()).image;
-    } catch (e) {
-      callDispose(() => codec?.dispose());
-      callDispose(() => decoded?.dispose());
-      callDispose(() => buf.dispose());
-      return;
-    }
-    if (_timesPrepared > 0) {
-      _decoded = decoded;
-      _codec = codec;
-      // see [ImageDisposeBugWorkaround].
-      if (_disposeDescriptor) {
-        _descriptor = des;
-      }
-      if (_disposeBuf) {
-        _buf = buf;
-      }
-    } else {
-      // It was too late when the image came in.
-      final decodedCopy = decoded; // Known to be not null
-      callDispose(() => decodedCopy.dispose());
-      final codecCopy = codec;
-      callDispose(() => codecCopy.dispose());
-      // https://github.com/flutter/flutter/issues/83421:
-      final desCopy = des;
-      if (_disposeDescriptor) {
-        callDispose(() => desCopy.dispose());
-      }
-      if (_disposeBuf) {
-        callDispose(() => buf.dispose());
-      }
-    }
-  }
-
-  void unprepare() {
-    if (_timesPrepared <= 0) {
-      throw StateError(
-        'Attempt to unprepare() an image that was not prepare()d',
-      );
-    }
-    _timesPrepared--;
-    if (_timesPrepared == 0) {
-      callDispose(
-        () => _decoded?.dispose(),
-      ); // Could be null if prepare() is still running
-      callDispose(() => _codec?.dispose());
-      callDispose(() => _descriptor?.dispose());
-      callDispose(() => _buf?.dispose());
-      _decoded = null;
-      _codec = null;
-      _descriptor = null;
-      _buf = null;
-    }
-  }
-
-  void paint(Canvas c) {
-    final im = _decoded;
-    if (im != null) {
-      final src = Rect.fromLTWH(
-        0,
-        0,
-        im.width.toDouble(),
-        im.height.toDouble(),
-      );
-      final dest = Rect.fromLTWH(
-        source.x,
-        source.y,
-        source.width,
-        source.height,
-      );
-      c.drawImageRect(im, src, dest, Paint());
-    }
-  }
 }
 
 class SIText extends SIRenderable {

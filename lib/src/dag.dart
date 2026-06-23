@@ -38,14 +38,13 @@ library;
 import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'affine.dart';
 import 'common.dart';
 import 'common_noui.dart';
 import 'exported.dart';
 import 'path.dart';
 import 'path_noui.dart';
+import 'render.dart';
 
 ///
 /// A Scalable Image that's represented by an in-memory directed
@@ -347,17 +346,23 @@ class SIMasked extends SIRenderable with SIMaskedHelper {
 
   @override
   void paint(Canvas c, Color currentColor) {
-    Rect? bounds = maskBounds;
-    startMask(c, bounds);
-    mask.paint(c, currentColor);
-    if (usesLuma) {
-      startLumaMask(c, bounds);
-      mask.paint(c, currentColor);
-      finishLumaMask(c);
+    final bounds =
+        maskBounds ??
+        child.getBoundary(null, null)?.getBounds() ??
+        mask.getBoundary(null, null)?.getBounds() ??
+        Rect.zero;
+    final softMask = PdfSoftMask(c.document, boundingBox: bounds.pdfRect);
+    final maskGraphics = softMask.getGraphics();
+    if (maskGraphics != null) {
+      mask.paint(PdfCanvas(maskGraphics, c.document), currentColor);
     }
-    startChild(c, bounds);
-    child.paint(c, currentColor);
-    finishMasked(c);
+    c.save();
+    try {
+      c.graphics.setGraphicState(PdfGraphicState(softMask: softMask));
+      child.paint(c, currentColor);
+    } finally {
+      c.restore();
+    }
   }
 
   @override

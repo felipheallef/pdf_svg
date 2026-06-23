@@ -38,7 +38,6 @@ library;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:jovial_misc/io_utils.dart';
 import 'affine.dart';
 import 'dag.dart';
@@ -48,6 +47,7 @@ import 'compact_noui.dart';
 import 'exported.dart';
 import 'path_noui.dart';
 import 'path.dart';
+import 'render.dart';
 
 ///
 /// A Scalable Image that's represented by a compact packed binary format
@@ -202,10 +202,7 @@ class ScalableImageCompact extends ScalableImageBase
 
   @override
   void paintChildren(Canvas c, Color currentColor) {
-    final v = _PaintingVisitor(c, _RenderContext.root(currentColor));
-    final CompactTraverser<void, SIImage> t = makeTraverser<void>(v);
-    v.traverser = t;
-    t.traverse(v.initial);
+    toDag().paintChildren(c, currentColor);
   }
 
   @override
