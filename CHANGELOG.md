@@ -1,3 +1,6 @@
+## [1.1.31] - June 2026
+- Create fork from `jovial_svg`
+
 ## [1.1.30] - May 2026
 - Update dependencies (for xml 7.0, Issue 141)
 
